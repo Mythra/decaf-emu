@@ -204,7 +204,7 @@ bit_scan_reverse(unsigned long *out_position, uint32_t bits)
 {
 #ifdef PLATFORM_WINDOWS
    return !!_BitScanReverse(out_position, bits);
-#elif defined(PLATFORM_POSIX)
+#elif defined(PLATFORM_POSIX) || defined(__FreeBSD__)
    if (bits == 0) {
       return false;
    }

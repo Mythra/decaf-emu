@@ -4,7 +4,7 @@
 
 #ifdef PLATFORM_WINDOWS
 #include <io.h>
-#elif defined(PLATFORM_POSIX)
+#elif defined(PLATFORM_POSIX) || || defined(__FreeBSD__)
 #include <unistd.h>
 #include <sys/types.h>
 #endif
@@ -83,7 +83,7 @@ HostFileHandle::seek(SeekDirection direction, int64_t offset)
       // TODO: Translate ERRNO ?
       return Error::GenericError;
    }
-#elif defined(PLATFORM_POSIX)
+#elif defined(PLATFORM_POSIX) || defined(__FreeBSD__)
    if (fseeko(mHandle, offset, seekDirection) != 0) {
       // TODO: Translate ERRNO ?
       return Error::GenericError;
@@ -134,17 +134,19 @@ HostFileHandle::tell()
       // TODO: Translate error?
       return { Error::GenericError };
    }
-#elif defined(PLATFORM_POSIX)
+
+   return { static_cast<int64_t>(position) };
+#elif defined(PLATFORM_POSIX) || defined(__FreeBSD__)
    auto position = ftello(mHandle);
    if (position < 0) {
       // TODO: Translate error?
       return { Error::GenericError };
    }
+
+   return { static_cast<int64_t>(position) };
 #else
    return Error::OperationNotSupported;
 #endif
-
-   return { static_cast<int64_t>(position) };
 }
 
 Result<int64_t>
@@ -166,7 +168,7 @@ HostFileHandle::truncate()
       // TODO: Translate error?
       return { Error::GenericError };
    }
-#elif defined(PLATFORM_POSIX)
+#elif defined(PLATFORM_POSIX) || defined(__FreeBSD__)
    fflush(mHandle);
    if (ftruncate(fileno(mHandle), static_cast<off_t>(*length)) != 0) {
       // TODO: Translate error?

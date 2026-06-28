@@ -2,7 +2,7 @@
 #include "platform.h"
 #include "platform_stacktrace.h"
 
-#ifdef PLATFORM_POSIX
+#ifdef PLATFORM_POSIX  || defined(__FreeBSD__)
 #include <stdexcept>
 
 namespace platform
