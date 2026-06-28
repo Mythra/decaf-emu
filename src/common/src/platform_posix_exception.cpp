@@ -78,7 +78,13 @@ dispatchException(Exception *exception,
          ctx->uc_mcontext->__ss.__rip = reinterpret_cast<uint64_t>(func);
 #endif
 #else
+#if defined(__x86_64__)
          ctx->uc_mcontext.gregs[REG_RIP] = reinterpret_cast<uint64_t>(func);
+#elif defined(__aarch64__)
+				 ctx->uc_mcontext.pc = reinterpret_cast<uint64_t>(func);
+#else
+#error "??? ARCH ???"
+#endif
 #endif
          return;
       }
