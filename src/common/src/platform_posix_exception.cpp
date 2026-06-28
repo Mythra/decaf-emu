@@ -72,7 +72,11 @@ dispatchException(Exception *exception,
          // Exception handled, switch execution to target function
          auto ctx = reinterpret_cast<ucontext_t *>(context);
 #ifdef PLATFORM_APPLE
+#if defined(__arm__) || defined(__arm64__)
+				 ctx->uc_mcontext->__ss.__pc = reinterpret_cast<uint64_t>(func);
+#else
          ctx->uc_mcontext->__ss.__rip = reinterpret_cast<uint64_t>(func);
+#endif
 #else
          ctx->uc_mcontext.gregs[REG_RIP] = reinterpret_cast<uint64_t>(func);
 #endif
