@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.2)
 
+# Newer VCPKG requires this set, and we need a newer VCPKG so it can detect
+# the latest versions of MSVC.
+cmake_policy(SET CMP0057 NEW)
+
 project(decaf-emu C CXX)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 set(CMAKE_CXX_STANDARD 17)

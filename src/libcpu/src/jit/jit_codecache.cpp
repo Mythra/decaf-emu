@@ -308,7 +308,11 @@ CodeCache::registerCodeBlock(uint32_t address,
 
    auto unwindAddress = reinterpret_cast<uintptr_t>(block->unwindInfo.data.data());
    block->unwindInfo.rtlFuncTable.BeginAddress = static_cast<DWORD>(codeAddress - mReserveAddress);
+#if defined(_M_ARM64) || defined(__aarch64__)
+	block->unwindInfo.rtlFuncTable.FunctionLength = static_cast<DWORD>(size / 4);
+#else
    block->unwindInfo.rtlFuncTable.EndAddress = static_cast<DWORD>(block->unwindInfo.rtlFuncTable.BeginAddress + size);
+#endif
    block->unwindInfo.rtlFuncTable.UnwindData = static_cast<DWORD>(unwindAddress - mReserveAddress);
    RtlAddFunctionTable(&block->unwindInfo.rtlFuncTable, 1, mReserveAddress);
 #endif

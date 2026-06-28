@@ -28,7 +28,13 @@ dispatchException(PEXCEPTION_POINTERS info, Exception *exception)
          return EXCEPTION_CONTINUE_EXECUTION;
       } else {
          // Exception handled, jump to new function
+#ifdef _M_X64
          info->ContextRecord->Rip = reinterpret_cast<DWORD64>(func);
+#elif defined(_M_ARM64) || defined(__aarch64__)
+				 info->ContextRecord->Pc = reinterpret_cast<DWORD64>(func);
+#else
+#error "???? ARCHITECTURE ???"
+#endif
          return EXCEPTION_CONTINUE_EXECUTION;
       }
    }

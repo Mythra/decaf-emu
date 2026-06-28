@@ -7,6 +7,11 @@
 #include "mem.h"
 #include "mmu.h"
 
+
+#if defined(_MSC_VER) && (!defined(_M_IX86) && !defined(_M_X64))
+#include <chrono>
+#endif
+
 #include <cfenv>
 #include <common/bitutils.h>
 #include <common/decaf_assert.h>
@@ -318,7 +323,13 @@ static inline uint64_t
 rdtsc()
 {
 #ifdef _MSC_VER
+#if defined(_M_IX86) || defined(_M_X64)
    return __rdtsc();
+#else
+		return std::chrono::duration_cast<std::chrono::nanoseconds>(
+           std::chrono::high_resolution_clock::now().time_since_epoch())
+    		.count();
+#endif
 #else
    uint64_t tsc;
    __asm__ volatile("rdtsc; shl $32,%%rdx; or %%rdx,%%rax"
